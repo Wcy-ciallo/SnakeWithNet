@@ -1,10 +1,13 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 
-public class Panel extends JPanel{
+
+public class Panel extends JPanel implements KeyListener{
     ImageIcon title = new ImageIcon("resource/img/title.jpg");
     ImageIcon body = new ImageIcon("resource/img/body.png");
     ImageIcon up = new ImageIcon("resource/img/up.png");
@@ -16,9 +19,13 @@ public class Panel extends JPanel{
     int[] snakex = new int[750];
     int[] snakey = new int[750];
     String fx = "R"; //fx: R, L, U, D
+    boolean isStarted = false;
 
     public Panel() {
         initSnake();
+        this.setFocusable(true);
+        this.addKeyListener(this);
+
     }
 
     public void paintComponent(Graphics g) {
@@ -40,10 +47,12 @@ public class Panel extends JPanel{
             body.paintIcon(this, g, snakex[i], snakey[i]);
         }
 
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("arial", Font.BOLD, 40));
-        g.drawString("Press <Space> to Start!", 300, 300);
-    }
+        if(!isStarted) {
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("arial", Font.BOLD, 40));
+            g.drawString("Press <Space> to Start!", 300, 300); 
+       } 
+   }
 
     public void initSnake() {
         this.len = 3;
@@ -53,5 +62,23 @@ public class Panel extends JPanel{
         snakey[1] = 100;
         snakex[2] = 50;
         snakey[2] = 100;
+    }
+
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int keyCode = e.getKeyCode();
+        if(keyCode == KeyEvent.VK_SPACE) {
+            isStarted = !isStarted;
+            repaint();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }
