@@ -9,16 +9,17 @@ import java.util.Random;
 import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
+import javax.sound.sampled.*;
 
 
 public class Panel extends JPanel implements KeyListener, ActionListener {
-    ImageIcon title = new ImageIcon("resource/img/title.jpg");
-    ImageIcon body = new ImageIcon("resource/img/body.png");
-    ImageIcon up = new ImageIcon("resource/img/up.png");
-    ImageIcon down = new ImageIcon("resource/img/down.png");
-    ImageIcon left = new ImageIcon("resource/img/left.png");
-    ImageIcon right = new ImageIcon("resource/img/right.png");
-    ImageIcon food = new ImageIcon("resource/img/food.png");
+    ImageIcon title = new ImageIcon("src/resource/img/title.jpg");
+    ImageIcon body = new ImageIcon("src/resource/img/body.png");
+    ImageIcon up = new ImageIcon("src/resource/img/up.png");
+    ImageIcon down = new ImageIcon("src/resource/img/down.png");
+    ImageIcon left = new ImageIcon("src/resource/img/left.png");
+    ImageIcon right = new ImageIcon("src/resource/img/right.png");
+    ImageIcon food = new ImageIcon("src/resource/img/food.png");
     int len = 3;
     int score = 0;
     int[] snakex = new int[750];
@@ -29,13 +30,15 @@ public class Panel extends JPanel implements KeyListener, ActionListener {
     Timer timer = new Timer(200, this);
     int foodx, foody;
     Random random = new Random();
+    Clip bgm;
 
     public Panel() {
         initSnake();
         this.setFocusable(true);
         this.addKeyListener(this);
         timer.start();
-
+        loadBgm();
+                System.out.println(getClass().getResource("/resource/sound/bgm.wav") + " good");
     }
 
     public void paintComponent(Graphics g) {
@@ -101,6 +104,11 @@ public class Panel extends JPanel implements KeyListener, ActionListener {
             } else {
                 isStarted = !isStarted;
             }
+            if(isStarted) {
+                playBgm();
+            } else {
+                stopBgm();
+            }
             repaint();
         } else if(keyCode == KeyEvent.VK_DOWN && fx != "U") {
             fx = "D";
@@ -159,5 +167,23 @@ public class Panel extends JPanel implements KeyListener, ActionListener {
             repaint();
         }
         timer.start();
+    }
+
+    private void loadBgm() {
+        try{
+            bgm = AudioSystem.getClip();
+            AudioInputStream ais = AudioSystem.getAudioInputStream(getClass().getResource("/resource/sound/bgm.wav"));
+            bgm.open(ais);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void playBgm() {
+        bgm.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+
+    private void stopBgm() {
+        bgm.stop();
     }
 }
