@@ -20,10 +20,12 @@ public class Panel extends JPanel implements KeyListener, ActionListener {
     ImageIcon right = new ImageIcon("resource/img/right.png");
     ImageIcon food = new ImageIcon("resource/img/food.png");
     int len = 3;
+    int score = 0;
     int[] snakex = new int[750];
     int[] snakey = new int[750];
     String fx = "R"; //fx: R, L, U, D
     boolean isStarted = false;
+    boolean isFailed = false;
     Timer timer = new Timer(200, this);
     int foodx, foody;
     Random random = new Random();
@@ -42,6 +44,9 @@ public class Panel extends JPanel implements KeyListener, ActionListener {
         title.paintIcon(this, g, 25, 11);
 
         g.fillRect(25, 75, 25*34, 25*24);
+        g.setColor(Color.WHITE);
+        g.drawString("Len: " + len, 750, 35);
+        g.drawString("Score: " + score, 750, 50);
         if(fx == "R") {
             right.paintIcon(this, g, snakex[0], snakey[0]);
         } else if(fx == "L") {
@@ -56,11 +61,15 @@ public class Panel extends JPanel implements KeyListener, ActionListener {
         }
         food.paintIcon(this, g, foodx, foody);
 
-        if(!isStarted) {
+        if(!isStarted && !isFailed) {
             g.setColor(Color.WHITE);
             g.setFont(new Font("arial", Font.BOLD, 40));
             g.drawString("Press <Space> to Start!", 300, 300); 
-       } 
+        } else if(isFailed) {
+            g.setColor(Color.RED);
+            g.setFont(new Font("arial", Font.BOLD, 40));
+            g.drawString("Press <Space> to Restart!", 200, 300);
+        }
    }
 
     public void initSnake() {
@@ -73,6 +82,8 @@ public class Panel extends JPanel implements KeyListener, ActionListener {
         snakey[2] = 100;
         foodx = 25 + 25 * random.nextInt(34);
         foody = 75 + 25 * random.nextInt(24);
+        fx = "R";
+        score = 0;
     }
 
 
@@ -84,15 +95,20 @@ public class Panel extends JPanel implements KeyListener, ActionListener {
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         if(keyCode == KeyEvent.VK_SPACE) {
-            isStarted = !isStarted;
+            if(isFailed) {
+                isFailed = false;
+                initSnake();
+            } else {
+                isStarted = !isStarted;
+            }
             repaint();
-        } else if(keyCode == KeyEvent.VK_DOWN) {
+        } else if(keyCode == KeyEvent.VK_DOWN && fx != "U") {
             fx = "D";
-        } else if(keyCode == KeyEvent.VK_UP) {
+        } else if(keyCode == KeyEvent.VK_UP && fx != "D") {
             fx = "U";
-        } else if(keyCode == KeyEvent.VK_LEFT) {
+        } else if(keyCode == KeyEvent.VK_LEFT && fx != "R") {
             fx = "L";
-        } else if(keyCode == KeyEvent.VK_RIGHT) {
+        } else if(keyCode == KeyEvent.VK_RIGHT && fx != "L") {
             fx = "R";
         }
     }
@@ -103,7 +119,7 @@ public class Panel extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(isStarted) {
+        if(isStarted && !isFailed) {
              for(int i = len - 1; i > 0; i--) {
                 snakex[i] = snakex[i - 1];
                 snakey[i] = snakey[i - 1];
@@ -125,6 +141,19 @@ public class Panel extends JPanel implements KeyListener, ActionListener {
                 snakey[0] += 25;
                 if(snakey[0] > 650) {
                     snakey[0] = 75;
+                }
+            }
+
+            if(snakex[0] == foodx && snakey[0] == foody) {
+                len++;
+                score += 10;
+                foodx = 25 + 25 * random.nextInt(34);
+                foody = 75 + 25 * random.nextInt(24);
+            }
+            for(int i = 1; i < len; i++) {
+                if(snakex[i] == snakex[0] && snakey[i] == snakey[0]) {
+                    isFailed = true;
+                    break;
                 }
             }
             repaint();
