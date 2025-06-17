@@ -1,3 +1,4 @@
+package singleVersion;
 import javax.swing.JFrame;
 
 public class Snake {
