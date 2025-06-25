@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.IOException;
-import gameControl.BtnListener;
+import gameControl.*;
 
 public class StartupGUI extends JFrame{
     private JButton localBtn, createRoomBtn, enterRoomBtn, exitBtn;
@@ -25,9 +25,13 @@ public class StartupGUI extends JFrame{
             titleLabel.setFont(new Font("GB18030 Bitmap", Font.BOLD, 36));
             titleLabel.setForeground(Color.DARK_GRAY);
             titleLabel.setBounds(0, 60, 900, 50);
-
             this.getContentPane().setLayout(null);
             this.getContentPane().add(titleLabel);
+
+            ImageIcon snakeLogo = new ImageIcon(getClass().getResource("/resource/img/snake_logo1.png"));
+            JLabel snakeLogoLabel = new JLabel(snakeLogo);
+            snakeLogoLabel.setBounds(273, 150, 354, 400);
+            this.getContentPane().add(snakeLogoLabel);
 
             JPanel buttonPanel = new JPanel();
             buttonPanel.setLayout(new GridLayout(2, 2, 10, 10));

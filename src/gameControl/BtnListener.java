@@ -2,6 +2,9 @@ package gameControl;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.SwingUtilities;
+import gameGUI.GameGUI;
 import gameGUI.StartupGUI;
 
 public class BtnListener implements ActionListener{
@@ -15,15 +18,23 @@ public class BtnListener implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         switch(cmd) {
-            case "Local": break;
+            case "Local": 
+                startupGUI.setVisible(false);
+                SwingUtilities.invokeLater(() -> {
+                    GameGUI gameGUI = new GameGUI(startupGUI);
+                    gameGUI.pack();
+                    gameGUI.setVisible(true);
+                });
+                break;
             
-            case "CreateRoom": 
+            case "CreateRoom": break;
 
-            case "EnterRoom": 
+            case "EnterRoom": break;
 
             case "Exit":
                 startupGUI.dispose();
                 System.exit(0);
+                break;
         }
     }
     
