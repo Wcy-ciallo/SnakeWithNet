@@ -2,11 +2,14 @@ package gameControl;
 
 import java.util.Random;
 import java.awt.Point;
+import java.io.Serializable;
 
-public class GameInfo {
+public class GameInfo implements Serializable{
+    private static final long serialVersionUID = 1L;
+
     private static GameInfo instance;
     Snake snake1, snake2;
-    Random random;
+    transient Random random;
     Point food;
     private boolean isPaused = false;
     private boolean isGameOver = false;
@@ -26,6 +29,10 @@ public class GameInfo {
             instance = new GameInfo();
         }
         return instance;
+    }
+
+    public static synchronized void resetInstance() {
+        instance = new GameInfo();
     }
 
     public Snake getSnake1() {
@@ -65,5 +72,34 @@ public class GameInfo {
         this.food.y = 75 + 25 * random.nextInt(24);
         this.isGameOver = false;
         this.isPaused = false;
+    }
+
+    public synchronized void syncFrom(GameInfo other) {
+        if (other == null) return;
+        
+        // 同步蛇1
+        if (other.snake1 != null) {
+            if (this.snake1 == null) {
+                this.snake1 = new Snake();
+            }
+            this.snake1.copyFrom(other.snake1);
+        }
+        
+        // 同步蛇2
+        if (other.snake2 != null) {
+            if (this.snake2 == null) {
+                this.snake2 = new Snake();
+            }
+            this.snake2.copyFrom(other.snake2);
+        }
+        
+        // 同步食物位置（创建新实例而不是共享引用）
+        if (other.food != null) {
+            this.food = new Point(other.food.x, other.food.y);
+        }
+        
+        // 同步游戏状态标志
+        this.isPaused = other.isPaused;
+        this.isGameOver = other.isGameOver;
     }
 }

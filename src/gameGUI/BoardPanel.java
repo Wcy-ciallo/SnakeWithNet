@@ -30,7 +30,7 @@ public class BoardPanel extends JPanel{
         this.timer = new Timer(200, this.timeListener);
         this.timer.start();
         this.setFocusable(true);
-        this.addKeyListener(new LocalKListener());
+        this.addKeyListener(new KListener());
         this.requestFocus(); 
         loadImage();
     }
@@ -94,5 +94,14 @@ public class BoardPanel extends JPanel{
     }
     public void timerStop() {
         this.timer.stop();
+    }
+
+    public void setNetworkMode(boolean isNetworkMode) {
+        this.isRemoted = isNetworkMode;
+        
+        // 网络模式下停止本地Timer，只接收服务器状态
+        if (isNetworkMode && timer != null) {
+            timer.stop();
+        }
     }
 }
